@@ -1,7 +1,1 @@
-Midwest Mobile Detailing V4
-
-New bucket hero, Johnson County service area, Midwest Cabin Refresh interior name, improved image fit, and updated maintenance and About imagery.
-
-Booking is a visual preview only; it does not send requests or reserve real appointments. Connect a backend before launching bookings.
-
-Upload the CONTENTS of this folder to the root of your GitHub repository or Cloudflare Pages.
+Midwest Mobile Detailing V5. Four-page static site. Booking is a visual-only demo: no live availability, blocking, submission, or SMS is connected. Weekday arrival windows: 3:30–4 and 5:30–6; Saturday 9–9:30, 11:30–12, 2–2:30; Sunday closed. Update scheduling backend before public launch. Extract contents to repository root for Cloudflare Pages.
