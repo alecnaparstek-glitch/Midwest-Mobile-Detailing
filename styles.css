@@ -20,3 +20,19 @@
 .date-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:16px 0}.date-tile,.time-tile{border:2px solid #f1d7c3;border-radius:11px;background:#fff9f4;padding:14px 6px;font-weight:800;color:#29211b}.date-tile.selected,.time-tile.selected{background:var(--orange);border-color:var(--orange);color:#fff}.time-grid{display:flex;flex-wrap:wrap;gap:10px}.time-tile{padding:14px 18px}.slot-heading{font:800 24px 'Barlow Condensed',Impact,sans-serif;margin:16px 0 10px}.availability-note{font-size:12px;color:#805b43;background:#fff5eb;border-radius:9px;padding:12px;margin-top:16px}.booking-summary{background:#fff3e7;border:1px solid #ffdcc4;border-radius:11px;padding:14px;margin-bottom:19px;display:grid;gap:4px}.booking-summary span{font-size:13px}.simplified-fields .field small{font-size:11px;font-weight:500;color:#6b625d}.service-area-note{background:#fff4e8;border:2px solid #ffcba7;padding:13px;border-radius:10px;margin-top:18px;font-size:13px;font-weight:800;color:#a33b08}
 @media(max-width:760px){.package-choices{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.package-choice img{height:125px!important}.package-choice strong{font-size:19px}.service-card img{height:170px}.detail-card>img{height:230px}.date-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.area-card{margin:0 4px}.about-grid img{height:330px}}
 @media(max-width:400px){.package-choice img{height:110px!important}.package-choice strong{font-size:17px}.date-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.detail-card>img{height:195px}}
+
+/* V6 refinements */
+:root{--cream:#fff8e9;--line:#f0e1c9}
+body{background:#fffbf4}
+.booking-summary,.service-area-note,.availability-note,.warning,.soft-box,.quiz-teaser{background:#fff8e9!important;border-color:#f1dcb8!important;color:#51422e!important}
+.service-area-note{color:#a3450d!important}
+.detail-prices{gap:15px}
+.detail-prices strong{font-size:38px;color:var(--deep)}
+.detail-card{grid-template-columns:29% 1fr 165px}
+.service-card img,.detail-card>img,.package-choice img{object-fit:cover!important;object-position:center!important}
+.service-card:has(img[src*="maintenance"]) img{object-fit:contain!important;background:#fff9f2!important}
+.about-grid img{object-fit:contain!important;background:#fff8ee}
+.page-banner{background:repeating-linear-gradient(157deg,transparent 0 155px,#ffffff14 157px 159px),var(--orange)}
+.area-band{background:linear-gradient(115deg,#ff7b24,#f45506)}
+.vehicle-quote{margin-top:15px}.quote-result{border:2px solid #ffca9d;background:#fff8e9;border-radius:14px;padding:18px;display:grid;gap:6px}.quote-result>span{font-size:13px;font-weight:800;color:#9c4a14}.quote-result>strong{font:900 44px 'Barlow Condensed',Impact,sans-serif;color:var(--deep)}.quote-result>small{font-weight:800}.quote-result p{font-size:12px;color:#65513c;line-height:1.5;margin:6px 0 0}.vehicle-help{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.upgrade-offer{margin-top:12px;padding:16px;background:#fff;border:2px solid #ffd6b3;border-radius:12px}.upgrade-offer p{font-size:13px;line-height:1.5}.upgrade-offer .btn{font-size:12px;padding:10px 14px}.pet-option{display:flex;gap:10px;align-items:center;font-size:13px;margin:14px 0;font-weight:700}
+@media(max-width:760px){.detail-card{grid-template-columns:32% 1fr}.detail-prices{grid-column:1/-1;flex-direction:row;justify-content:space-between;padding:12px}.detail-prices strong{font-size:29px}}
