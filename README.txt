@@ -1,13 +1,11 @@
-MIDWEST MOBILE DETAILING — VERSION 2
+MIDWEST MOBILE DETAILING — REFERENCE-INSPIRED WEBSITE
 
-Open index.html in a browser to preview.
-For Cloudflare Pages: upload the contents of this folder (index.html and assets) as a static site.
+Open index.html locally to preview. Upload the contents of this folder (not the folder itself) to Cloudflare Pages for static hosting.
 
-What is included:
-- New orange-and-white homepage with a bucket-focused hero image cropped from the latest design concept.
-- Original user-provided interior, exterior, and complete-detail photos.
-- Midwest package names, price estimates, quiz, maintenance offer, FAQ, and About section.
+Pages: index.html, services.html, booking.html, about.html.
 
-IMPORTANT: The booking form is DEMO ONLY and does not submit appointments. No calendar, email, or SMS integration is configured. Do not advertise online booking until a backend is connected and tested.
+Photos: actual user-supplied interior, exterior, complete, and logo; bucket merchandise cropped from supplied brand mockup.
 
-Hero photo is an AI-generated concept image, not a documentary photograph. Replace with your own photo for a more authentic look.
+IMPORTANT: The booking UI is a non-submitting demonstration. It does not check live availability, send SMS/email, or save customer data. Connect a secure booking backend and verify approval workflows before taking real appointments.
+
+The reference screenshot is a visual concept, not a source of separate full-resolution images. This implementation recreates the layout, typography, wording, and sections in responsive HTML/CSS, using supplied images rather than stretching the screenshot.
