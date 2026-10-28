@@ -1,9 +1,9 @@
-Midwest Mobile Detailing V6
+Midwest Mobile Detailing V7
 
-Upload all files and assets/ folder to Cloudflare Pages or GitHub.
+Vehicle prices: Interior $159 sedan / $179 SUV or truck / $199 oversized; Exterior $89/$109/$129; Complete $229/$259/$299. Monthly maintenance unchanged.
 
-Pricing: Starting prices $129 interior, $79 exterior, $209 complete. Vehicle lookup is a lightweight LOCAL keyword/size estimator, not an external database. It handles common vehicle models; for unrecognized models, visitors can select a size manually. Quotes are estimates, not guaranteed final prices.
+Vehicle search uses an offline list of common makes/models, fuzzy suggestions and typo tolerance. A model must be selected to get a quote; unlisted vehicles need a manual quote. No external lookup or API cost.
 
-Booking remains a NON-SUBMITTING prototype. No live availability, SMS, blocked dates or appointment approval backend is connected.
+Booking date selection shows one week at a time with arrows. Upgrade moves directly to the date page.
 
-The quote upgrade compares the full detail against purchasing interior and exterior separately.
+Booking remains a NON-SUBMITTING design prototype: no live availability, SMS, appointment approvals, or blocked dates.
