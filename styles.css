@@ -45,3 +45,36 @@ body{background:#fffbf4}
 .upgrade-offer{background:linear-gradient(120deg,#fff7eb,#fff)!important;border:2px solid #f87a28;padding:20px;box-shadow:0 8px 20px #b4561420}.upgrade-kicker{font-size:11px;letter-spacing:1.5px;font-weight:900;color:#e75c09}.upgrade-offer h3{font:900 27px 'Barlow Condensed',Impact,sans-serif;text-transform:uppercase;margin:8px 0}.upgrade-offer p{font-size:14px}.upgrade-bottom{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:14px}.upgrade-bottom>span{font-size:13px;font-weight:700}.upgrade-bottom>span strong{display:block;font-size:26px;color:#e95b08}.upgrade-bottom .btn{background:#f25b0b;color:#fff!important;white-space:normal;text-align:center}
 .detail-prices strong{font-size:22px;line-height:1.3}.detail-prices .size{font-size:10px}
 @media(max-width:760px){.week-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.upgrade-bottom{flex-direction:column;align-items:stretch}.field-grid.simplified-fields{grid-template-columns:1fr}.simplified-fields .field.full{grid-column:1}.detail-prices strong{font-size:20px}}
+
+/* V9: high contrast, cream instead of pink/rose, compact add-ons */
+:root{--cream:#fffaf2;--line:#eee2cf}
+body{background:#fffdfa}
+.booking-panel,.booking-shell{background:#fff!important}
+.quote-result{background:#fffdf7!important;border:2px solid #ead9bc!important;color:#25201a!important;box-shadow:0 3px 10px #382b1610}
+.quote-result>span{color:#8d3907!important;font-size:13px;letter-spacing:.3px}
+.quote-result>strong{color:#e95808!important;font-size:49px}
+.quote-result>small{color:#27211c!important;font-size:14px}
+.quote-result p{color:#514638!important}
+.upgrade-offer{background:#fffaf2!important;border:2px solid #ff741c!important;color:#231b14!important}
+.upgrade-offer h3,.upgrade-bottom>span{color:#211b16!important}
+.upgrade-offer p{color:#30271f!important}
+.week-nav,.date-tile,.time-tile,.availability-note,.booking-summary,.service-area-note,.warning,.soft-box,.quiz-teaser{background:#fffaf2!important;border-color:#ebdac0!important;color:#2d261f!important}
+.date-tile.selected,.time-tile.selected{background:#fa5a0a!important;border-color:#fa5a0a!important;color:#fff!important}
+.date-tile:hover:not(.selected),.time-tile:hover:not(.selected){border-color:#f46b1c!important;background:#fff3e5!important}
+.week-arrow{background:#fffdf9;border-color:#f7a16b;color:#c34b0a}
+.week-arrow:disabled{opacity:.3}
+.package-choice{background:#fffdf8!important;border-color:#efdbc4!important}
+.package-choice.selected{border-color:#f96713!important;background:#fff6ea!important}
+.addon-banner{background:#fffaf2!important;color:#2d241d!important;padding:22px 0!important;border-top:2px solid #f4e1c8;border-bottom:2px solid #f4e1c8}
+.addon-banner .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.addon-banner .eyebrow{color:#c64c0c!important;font-size:10px}
+.addon-banner h2{font-size:27px!important;margin:0!important;color:#26201b!important}
+.addon-pill{font-size:12px!important;background:#fff!important;border:1px solid #e8d4b7!important;color:#30261f!important;padding:10px 14px!important;border-radius:10px!important}
+.pet-option{background:#fffaf2;border:1px solid #e7d5b8;border-radius:9px;padding:10px 12px;font-size:12px;max-width:460px}
+.detail-prices .size{color:#955019!important}
+.detail-prices strong{font-size:30px!important;color:#e85b0c!important}
+.maintenance-restriction{display:block;max-width:190px;font-size:12px;line-height:1.5;color:#514432;font-weight:700}
+.service-card .from{font-size:12px;font-weight:800;color:#593c25}
+.service-card .price{color:#ef570c}
+.about-grid img{display:block;width:100%;height:auto;max-height:490px;object-fit:contain!important;background:#fffaf2;border:5px solid #fff;box-shadow:0 8px 25px #b27b3c24}
+@media(max-width:760px){.addon-banner .wrap{justify-content:flex-start}.detail-prices strong{font-size:26px!important}.maintenance-restriction{max-width:none}}
