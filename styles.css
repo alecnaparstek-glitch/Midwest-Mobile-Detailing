@@ -78,3 +78,10 @@ body{background:#fffdfa}
 .service-card .price{color:#ef570c}
 .about-grid img{display:block;width:100%;height:auto;max-height:490px;object-fit:contain!important;background:#fffaf2;border:5px solid #fff;box-shadow:0 8px 25px #b27b3c24}
 @media(max-width:760px){.addon-banner .wrap{justify-content:flex-start}.detail-prices strong{font-size:26px!important}.maintenance-restriction{max-width:none}}
+
+/* Keep service packages aligned and their price/action groups compact. */
+@media(max-width:760px){
+  .detail-prices{justify-content:center;gap:24px;padding:12px;flex-wrap:wrap}
+  .detail-prices .btn{flex:none}
+  .detail-prices .maintenance-restriction{flex:0 1 260px;text-align:left}
+}
