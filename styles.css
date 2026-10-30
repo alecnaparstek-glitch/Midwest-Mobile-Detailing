@@ -85,3 +85,24 @@ body{background:#fffdfa}
   .detail-prices .btn{flex:none}
   .detail-prices .maintenance-restriction{flex:0 1 260px;text-align:left}
 }
+
+/* Keep mobile form text at 16px to prevent automatic focus zoom. */
+input,select,textarea,.field input,.field select,.field textarea{font-size:16px}
+.addon-options{border:0;padding:0;margin:22px 0 12px;min-width:0}
+.addon-options legend{font:800 27px 'Barlow Condensed',Impact,sans-serif;color:var(--deep)}
+.addon-options-grid,.service-addons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.addon-choice{display:flex;align-items:center;gap:12px;padding:16px;border:2px solid #eadac6;border-radius:12px;background:#fff;cursor:pointer}
+.addon-choice:has(input:checked){border-color:var(--orange);background:#fff5e9}
+.addon-choice:focus-within{outline:2px solid var(--orange);outline-offset:3px}
+.addon-choice input{width:20px;height:20px;flex-shrink:0;accent-color:var(--orange)}
+.addon-choice span{flex:1}.addon-choice strong,.addon-choice small{display:block}
+.addon-choice small{font-size:12px;line-height:1.5;margin-top:5px;color:#68513b}
+.addon-choice>b{color:#c64c0c;white-space:nowrap}
+.addon-banner .service-addons{width:100%}
+.service-addon{background:#fff;border:1px solid #e8d4b7;border-radius:14px;padding:20px}
+.service-addon>div{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.service-addon h3{margin:0;font:800 28px 'Barlow Condensed',Impact,sans-serif}
+.service-addon strong{color:#c64c0c;font-size:23px}.service-addon p{font-size:14px;line-height:1.5}
+.service-addon small{display:block;color:#68513b}.service-addon a{display:inline-block;margin-top:16px;color:#b54208;font-weight:800;font-size:14px}
+.service-addons .addon-pill{grid-column:1/-1}
+@media(max-width:760px){.addon-options-grid,.service-addons{grid-template-columns:1fr}}
