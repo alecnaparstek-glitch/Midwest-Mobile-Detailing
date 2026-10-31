@@ -68,7 +68,7 @@ function allowedDailyStart(iso){
   const day=dayOf(iso);
   if(day<"2026-11-02"||day>"2026-11-08")return true;
   const time=new Intl.DateTimeFormat("en-GB",{timeZone:ZONE,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(iso));
-  if(["2026-11-02","2026-11-03","2026-11-04","2026-11-05"].includes(day))return ["16:00","20:00"].includes(time);
+  if(["2026-11-02","2026-11-03","2026-11-04","2026-11-05"].includes(day))return ["16:00","18:00"].includes(time);
   if(day==="2026-11-07")return ["09:00","13:00"].includes(time);
   return false;
 }
