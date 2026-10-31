@@ -21,13 +21,14 @@ async function square(env,path,body) {
   return data;
 }
 const normal=s=>String(s||"").toLowerCase().replace(/[^a-z0-9]/g,"");
-async function catalog(env){
+async function catalog(env,diagnostics=false){
   const items=[];let cursor;
   do{
     const r=await square(env,"/catalog/search-catalog-items",{product_types:["APPOINTMENTS_SERVICE"],limit:100,...(cursor?{cursor}:{})});
     items.push(...(r.items||[]));cursor=r.cursor;
     if(items.length>1000)throw new BookingError("Service configuration needs attention.");
   }while(cursor);
+  if(diagnostics)return items.map(item=>({name:item.item_data?.name,variations:(item.item_data?.variations||[]).map(v=>({name:v.item_variation_data?.name,bookable:v.item_variation_data?.available_for_booking,duration:v.item_variation_data?.service_duration,versionPresent:Boolean(v.version),allLocations:v.present_at_all_locations,atThisLocation:v.present_at_location_ids?.includes(LOCATION),excludedHere:v.absent_at_location_ids?.includes(LOCATION)}))}));
   return items.flatMap(item=>(item.item_data?.variations||[]).filter(v=>!v.is_deleted&&v.item_variation_data?.available_for_booking&&
     (v.present_at_all_locations!==false||v.present_at_location_ids?.includes(LOCATION))&&!v.absent_at_location_ids?.includes(LOCATION)).map(v=>({
       id:v.id,version:v.version,item:item.item_data.name,name:v.item_variation_data.name,
@@ -97,7 +98,7 @@ export default {
         const [services,profile]=await Promise.all([catalog(env),square(env,"/bookings/business-booking-profile")]);
         const linked={};for(const [id,name]of Object.entries(PACKS)){try{selectService(services,name,0);linked[id]=true}catch{linked[id]=false}}
         return reply({backend:"ready",squareConnected:true,bookingEnabled:Boolean(env.BOOKING_COORDINATOR)&&profile.business_booking_profile?.booking_enabled===true&&profile.business_booking_profile?.support_seller_level_writes===true&&Object.values(linked).every(Boolean),
-          sellerBookingWrites:profile.business_booking_profile?.support_seller_level_writes===true,packages:linked,bookableServiceNames:[...new Set(services.map(v=>v.item))]});
+          serviceDiagnostics:await catalog(env,true),sellerBookingWrites:profile.business_booking_profile?.support_seller_level_writes===true,packages:linked,bookableServiceNames:[...new Set(services.map(v=>v.item))]});
       }
       if(request.method!=="POST")return reply({error:"Method not allowed"},405);
       if(request.headers.get("Origin")!==url.origin||!request.headers.get("Content-Type")?.startsWith("application/json"))return reply({error:"Invalid request"},403);
