@@ -8,5 +8,21 @@
     "run_worker_first": [
       "/api/*"
     ]
-  }
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "BOOKING_COORDINATOR",
+        "class_name": "BookingCoordinator"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "booking-v1",
+      "new_sqlite_classes": [
+        "BookingCoordinator"
+      ]
+    }
+  ]
 }
