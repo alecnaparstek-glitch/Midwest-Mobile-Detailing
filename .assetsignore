@@ -1,0 +1,9 @@
+worker.js
+wrangler.jsonc
+.assetsignore
+README.txt
+.git
+.github
+node_modules
+.env*
+.dev.vars*
