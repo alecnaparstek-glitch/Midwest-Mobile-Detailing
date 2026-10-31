@@ -87,13 +87,13 @@ async function dailyBookingCount(env,day){
   return count;
 }
 
-async function availability(env,input,allStarts=false){
+async function availability(env,input){
   const profile=(await square(env,"/bookings/business-booking-profile")).business_booking_profile;
   if(!profile?.booking_enabled||!profile?.support_seller_level_writes)throw new BookingError("Online booking is temporarily unavailable. Please contact us to schedule.",503,"API_ACCESS");
   const segments=await segmentsFor(env,input),range=dateRange(input.date);
   if(await dailyBookingCount(env,input.date)>=2)return [];
   const r=await square(env,"/bookings/availability/search",{query:{filter:{location_id:LOCATION,start_at_range:range,segment_filters:segments.map(s=>({service_variation_id:s.id}))}}});
-  return (r.availabilities||[]).filter(a=>dayOf(a.start_at)===input.date&&Date.parse(a.start_at)>Date.now()&&(allStarts||allowedDailyStart(a.start_at)));
+  return (r.availabilities||[]).filter(a=>dayOf(a.start_at)===input.date&&Date.parse(a.start_at)>Date.now()&&allowedDailyStart(a.start_at));
 }
 function safeText(value,max){return typeof value==="string"?value.trim().slice(0,max):"";}
 async function sign(env,data){
@@ -123,7 +123,7 @@ export default {
         const [services,profile]=await Promise.all([catalog(env),square(env,"/bookings/business-booking-profile")]);
         const linked={};for(const [id,name]of Object.entries(PACKS)){try{selectService(services,name,0);linked[id]=true}catch{linked[id]=false}}
         return reply({backend:"ready",squareConnected:true,bookingEnabled:Boolean(env.BOOKING_COORDINATOR)&&profile.business_booking_profile?.booking_enabled===true&&profile.business_booking_profile?.support_seller_level_writes===true&&Object.values(linked).every(Boolean),
-          locationTimezone:(await square(env,"/locations/"+LOCATION)).location?.timezone,diagnosticStarts:(await availability(env,{pack:"interior",size:0,addOns:[],date:"2026-11-03"},true)).map(a=>a.start_at),serviceDiagnostics:await catalog(env,true),sellerBookingWrites:profile.business_booking_profile?.support_seller_level_writes===true,packages:linked,bookableServiceNames:[...new Set(services.map(v=>v.item))]});
+          locationTimezone:(await square(env,"/locations/"+LOCATION)).location?.timezone,serviceDiagnostics:await catalog(env,true),sellerBookingWrites:profile.business_booking_profile?.support_seller_level_writes===true,packages:linked,bookableServiceNames:[...new Set(services.map(v=>v.item))]});
       }
       if(request.method!=="POST")return reply({error:"Method not allowed"},405);
       if(request.headers.get("Origin")!==url.origin||!request.headers.get("Content-Type")?.startsWith("application/json"))return reply({error:"Invalid request"},403);
