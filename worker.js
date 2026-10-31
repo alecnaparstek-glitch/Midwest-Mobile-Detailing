@@ -1,7 +1,7 @@
 const LOCATION = "LR9S8A5TFKB2S";
 const ZONE = "America/Chicago";
 const PACKS = { interior: "Midwest Cabin Refresh", exterior: "Midwest Fresh Finish", complete: "Midwest Full Reset" };
-const ADDONS = { ceramic: { name: "Ceramic Wax", packs: ["exterior","complete"] }, stain: { name: "Heavy Stain Removal", packs: ["interior","complete"] } };
+const ADDONS = { ceramic: { name: "Ceramic Wax", price: 20, noteOnly: true, packs: ["exterior","complete"] }, stain: { name: "Heavy Stain Removal", packs: ["interior","complete"] } };
 const reply = (value, status=200) => new Response(JSON.stringify(value), {status,headers:{"Content-Type":"application/json","Cache-Control":"no-store","X-Content-Type-Options":"nosniff"}});
 class BookingError extends Error { constructor(message,status=503,code="SETUP_REQUIRED"){super(message);this.status=status;this.code=code;} }
 async function square(env,path,body) {
@@ -53,7 +53,7 @@ async function segmentsFor(env,input){
   const choice=selection(input),services=await catalog(env);
   let mapping={};if(env.SQUARE_SERVICE_MAP){try{mapping=JSON.parse(env.SQUARE_SERVICE_MAP)}catch{throw new BookingError("Service mapping needs attention.")}}
   const primary=selectService(services,PACKS[choice.pack],choice.size,mapping[choice.pack]?.[choice.size]||mapping[choice.pack]?.default);
-  return [primary,...choice.addOns.map(id=>selectService(services,ADDONS[id].name,choice.size,mapping[id]?.default))];
+  return [primary,...choice.addOns.filter(id=>!ADDONS[id].noteOnly).map(id=>selectService(services,ADDONS[id].name,choice.size,mapping[id]?.default))];
 }
 function dayOf(iso){return new Intl.DateTimeFormat("en-CA",{timeZone:ZONE,year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(iso));}
 function dateRange(day){
@@ -176,7 +176,7 @@ export class BookingCoordinator {
     const slot=slots.find(a=>a.start_at===input.slot.start&&a.appointment_segments[0].team_member_id===input.slot.team);
     if(!slot)return reply({error:"That time is no longer available. Please choose another.",code:"SLOT_TAKEN"},409);
     const customer=await square(this.env,"/customers",{idempotency_key:input.requestId,given_name:input.name,phone_number:input.phone});
-    const extras=input.slot.addOns.map(id=>ADDONS[id].name);
+    const extras=input.slot.addOns.map(id=>ADDONS[id].name+(ADDONS[id].noteOnly?" (+$"+ADDONS[id].price+"; no additional appointment time)":""));
     const note=["Website booking",PACKS[input.slot.pack],"Vehicle: "+input.vehicle,"Service address: "+input.address,
       extras.length?"Add-ons: "+extras.join(", "):"",input.pet?"Heavy pet hair removal: price after inspection":"",
       "Arrival window: first 30 minutes of appointment. Water and electricity access required."].filter(Boolean).join("\n");
