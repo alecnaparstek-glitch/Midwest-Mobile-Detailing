@@ -63,12 +63,37 @@ function dateRange(day){
   if(time<Date.now()-86400000||time>Date.now()+90*86400000)throw new BookingError("Choose a day within the next 90 days.",400,"INVALID_INPUT");
   return {start_at:new Date(Math.max(Date.now()+60000,time)).toISOString(),end_at:new Date(time+2*86400000).toISOString()};
 }
+
+function allowedDailyStart(iso){
+  const day=dayOf(iso);
+  if(day<"2026-11-02"||day>"2026-11-08")return true;
+  const time=new Intl.DateTimeFormat("en-GB",{timeZone:ZONE,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(iso));
+  if(["2026-11-02","2026-11-03","2026-11-04","2026-11-05"].includes(day))return ["16:00","20:00"].includes(time);
+  if(day==="2026-11-07")return ["09:00","13:00"].includes(time);
+  return false;
+}
+async function dailyBookingCount(env,day){
+  const start=new Date(Date.parse(day+"T00:00:00Z")-86400000).toISOString();
+  const end=new Date(Date.parse(day+"T00:00:00Z")+2*86400000).toISOString();
+  let cursor,count=0;
+  do{
+    const params=new URLSearchParams({location_id:LOCATION,start_at_min:start,start_at_max:end,limit:"100"});
+    if(cursor)params.set("cursor",cursor);
+    const r=await square(env,"/bookings?"+params);
+    count+=(r.bookings||[]).filter(b=>dayOf(b.start_at)===day&&["ACCEPTED","PENDING"].includes(b.status)).length;
+    cursor=r.cursor;
+    if(count>=2)return count;
+  }while(cursor);
+  return count;
+}
+
 async function availability(env,input){
   const profile=(await square(env,"/bookings/business-booking-profile")).business_booking_profile;
   if(!profile?.booking_enabled||!profile?.support_seller_level_writes)throw new BookingError("Online booking is temporarily unavailable. Please contact us to schedule.",503,"API_ACCESS");
   const segments=await segmentsFor(env,input),range=dateRange(input.date);
+  if(await dailyBookingCount(env,input.date)>=2)return [];
   const r=await square(env,"/bookings/availability/search",{query:{filter:{location_id:LOCATION,start_at_range:range,segment_filters:segments.map(s=>({service_variation_id:s.id}))}}});
-  return (r.availabilities||[]).filter(a=>dayOf(a.start_at)===input.date&&Date.parse(a.start_at)>Date.now());
+  return (r.availabilities||[]).filter(a=>dayOf(a.start_at)===input.date&&Date.parse(a.start_at)>Date.now()&&allowedDailyStart(a.start_at));
 }
 function safeText(value,max){return typeof value==="string"?value.trim().slice(0,max):"";}
 async function sign(env,data){
