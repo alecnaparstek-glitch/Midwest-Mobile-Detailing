@@ -1,7 +1,7 @@
 const LOCATION = "LR9S8A5TFKB2S";
 const ZONE = "America/Chicago";
 const PACKS = { interior: "Midwest Cabin Refresh", exterior: "Midwest Fresh Finish", complete: "Midwest Full Reset" };
-const ADDONS = { ceramic: { name: "Ceramic Wax", price: 20, noteOnly: true, packs: ["exterior","complete"] }, stain: { name: "Heavy Stain Removal", packs: ["interior","complete"] } };
+const ADDONS = { ceramic: { name: "Ceramic Wax", price: 20, noteOnly: true, packs: ["exterior","complete"] }, stain: { name: "Heavy Stain Removal", price: 40, noteOnly: true, packs: ["interior","complete"] } };
 const reply = (value, status=200) => new Response(JSON.stringify(value), {status,headers:{"Content-Type":"application/json","Cache-Control":"no-store","X-Content-Type-Options":"nosniff"}});
 class BookingError extends Error { constructor(message,status=503,code="SETUP_REQUIRED"){super(message);this.status=status;this.code=code;} }
 async function square(env,path,body) {
