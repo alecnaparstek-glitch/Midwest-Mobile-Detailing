@@ -106,3 +106,26 @@ input,select,textarea,.field input,.field select,.field textarea{font-size:16px}
 .service-addon small{display:block;color:#68513b}.service-addon a{display:inline-block;margin-top:16px;color:#b54208;font-weight:800;font-size:14px}
 .service-addons .addon-pill{grid-column:1/-1}
 @media(max-width:760px){.addon-options-grid,.service-addons{grid-template-columns:1fr}}
+
+/* Customer photos and direct contact. */
+html{scroll-behavior:smooth}
+#contact,#results{scroll-margin-top:100px}
+.results-section{background:#fffaf3}
+.results-section .eyebrow,.contact-section .eyebrow{color:var(--orange)}
+.results-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.result-photo{margin:0;background:#fff;border:1px solid #eadac6;border-radius:16px;overflow:hidden}
+.result-photo>a{display:block;position:relative;overflow:hidden}
+.result-photo img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;object-position:center}
+.result-label{position:absolute;left:16px;top:16px;padding:8px 14px;background:#332619;color:#fff;border-radius:30px;font-weight:800;font-size:14px}
+.result-label.after{background:var(--orange);color:#fff}
+.result-photo figcaption{padding:16px;font-size:14px;line-height:1.5;color:#58422e}
+.results-action{text-align:center;margin-top:28px}
+.contact-section{background:#fff}
+.contact-card{display:flex;align-items:center;justify-content:space-between;gap:32px;border:1px solid #eadac6;border-radius:18px;padding:32px;background:#fffaf3}
+.contact-card h2{font:800 36px 'Barlow Condensed',Impact,sans-serif;margin:10px 0;text-transform:uppercase}
+.contact-card p{max-width:640px;line-height:1.65;margin:8px 0}
+.contact-card p a{color:#a73a06;font-weight:800}
+.contact-actions{display:flex;flex-direction:column;gap:12px;flex-shrink:0}
+.contact-actions .btn{text-align:center}
+@media(max-width:760px){.results-grid{grid-template-columns:1fr}.contact-card{display:block;padding:24px}.contact-actions{margin-top:22px}.result-photo img{max-height:520px}.contact-card h2{font-size:30px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
