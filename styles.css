@@ -129,3 +129,6 @@ html{scroll-behavior:smooth}
 .contact-actions .btn{text-align:center}
 @media(max-width:760px){.results-grid{grid-template-columns:1fr}.contact-card{display:block;padding:24px}.contact-actions{margin-top:22px}.result-photo img{max-height:520px}.contact-card h2{font-size:30px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* Policy pages share the site palette, typography, header and footer. */
+.footer-legal{display:flex;flex-wrap:wrap;gap:12px 24px;width:100%;font-size:13px}.footer-legal a{text-decoration:underline;text-underline-offset:3px}.footer-legal a:hover{color:var(--orange)}.policy-copy{max-width:800px;margin:auto;line-height:1.75;overflow-wrap:anywhere}.policy-copy h2{font:800 29px/1.2 "Barlow Condensed",Impact,sans-serif;text-transform:uppercase;margin:32px 0 12px}.policy-copy p{margin:0 0 16px}.policy-copy a{color:var(--deep);text-decoration:underline;text-underline-offset:3px}.policy-copy ul{padding-left:22px}.policy-copy li{margin-bottom:8px}.policy-updated{font-size:14px;color:#595048}.policy-copy :first-child{margin-top:0}
