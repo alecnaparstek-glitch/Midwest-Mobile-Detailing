@@ -127,7 +127,24 @@ async function submitSquareBooking(){
  const result=await bookingAPI('create',{requestId:liveBooking.requestId,token:liveBooking.selected.token,name:booking.name,phone:booking.phone,address:booking.address,vehicle:booking.vehicle,pet:booking.pet&&['interior','complete'].includes(booking.pack),website:document.getElementById('booking-website')?.value||''});
  if(!result.id||!result.start||!['ACCEPTED','PENDING'].includes(result.status))throw new Error('No booking confirmation was returned.');
  const pending=result.status==='PENDING';
- document.getElementById('booking-panel').innerHTML='<h2>'+(pending?'Appointment Requested':'Appointment Booked')+'</h2><div class="booking-summary"><strong>'+escapeHtml(packages.find(p=>p.id===booking.pack).name)+'</strong><span>'+escapeHtml(booking.date)+' · '+escapeHtml(arrivalLabel(result.start))+' Central Time</span><span>Reference: '+escapeHtml(result.id)+'</span></div><p>'+(pending?'Your request is in our calendar and awaits approval. We will contact you to confirm.':'Your appointment has been added to our calendar. We look forward to detailing your vehicle.')+'</p><p>We’ll text the mobile number you provided if anything changes or we’re running behind.</p>';
+ const panel=document.getElementById('booking-panel');
+ const title=pending?'Appointment request received':'Your appointment is booked!';
+ const message=pending
+  ?'Your request is awaiting approval. We’ll contact you when your appointment is confirmed.'
+  :'You’re confirmed for the date and arrival window below.';
+ panel.innerHTML=`<h2 id="booking-result-title" tabindex="-1">${title}</h2>
+  <p><strong>${message}</strong></p>
+  <div class="booking-summary">
+   <strong>${escapeHtml(packages.find(p=>p.id===booking.pack).name)}</strong>
+   <span>${escapeHtml(booking.date)} · ${escapeHtml(arrivalLabel(result.start))} Central Time</span>
+   <span>Booking reference: ${escapeHtml(result.id)}</span>
+  </div>
+  <p>We’ll text the mobile number you provided if anything changes or we’re running behind.</p>`;
+ document.getElementById('booking-result-title').focus({preventScroll:true});
+ panel.scrollIntoView({
+  behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',
+  block:'center'
+ });
  }catch(e){
   if(!e.status||e.status>=500){
    error.textContent='We couldn’t verify your booking. Use Retry Confirmation to check the same request, or call or text (913) 905-9935 before starting a new booking.';
