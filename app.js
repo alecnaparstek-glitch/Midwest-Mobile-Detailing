@@ -81,7 +81,24 @@ function durationLabel(minutes){
  return [hours?hours+' '+(hours===1?'hour':'hours'):'',remaining?remaining+' '+(remaining===1?'minute':'minutes'):''].filter(Boolean).join(' ');
 }
 const arrivalLabel=start=>{const format=new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',hour:'numeric',minute:'2-digit'});const date=new Date(start);const windowMinutes=format.format(date)==='6:15 PM'?15:30;return format.format(date)+' – '+format.format(new Date(date.getTime()+windowMinutes*60000));};
-async function bookingAPI(path,body){const r=await fetch('/api/booking/'+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const data=await r.json();if(!r.ok){const e=new Error(data.error||'Unable to load booking. Please try again.');e.code=data.code;throw e;}return data;}
+async function bookingAPI(path,body){
+ const controller=new AbortController();
+ const timeout=setTimeout(()=>controller.abort(),path==='create'?30000:20000);
+ try{
+  const response=await fetch('/api/booking/'+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:controller.signal});
+  const data=await response.json();
+  if(!response.ok){
+   const error=new Error(data.error||'Unable to load booking. Please try again.');
+   error.code=data.code;
+   error.status=response.status;
+   throw error;
+  }
+  return data;
+ }catch(error){
+  if(controller.signal.aborted)throw new Error('The booking server took too long to respond.');
+  throw error;
+ }finally{clearTimeout(timeout)}
+}
 function drawLiveDates(){
  const day=businessDay(),base=new Date(day+'T12:00:00Z');base.setUTCDate(base.getUTCDate()+booking.week*7);
  const days=Array.from({length:7},(_,i)=>{const d=new Date(base);d.setUTCDate(base.getUTCDate()+i);return {iso:d.toISOString().slice(0,10),label:d.toLocaleDateString('en-US',{timeZone:'UTC',weekday:'short',month:'short',day:'numeric'})};});
@@ -101,13 +118,31 @@ async function submitSquareBooking(){
  if(liveBooking.sending)return;
  const error=document.getElementById('booking-error'),button=document.getElementById('submit-booking');
  if(!liveBooking.selected){error.textContent='Please go back and choose an available time.';return}
- liveBooking.sending=true;button.disabled=true;button.textContent='Booking…';error.textContent='';
- liveBooking.requestId=liveBooking.requestId||crypto.randomUUID();
+ const controls=document.querySelectorAll('#booking-panel input, #booking-panel button');
+ liveBooking.sending=true;
+ controls.forEach(control=>control.disabled=true);
+ button.textContent='Booking…';error.textContent='';
  try{
+ liveBooking.requestId=liveBooking.requestId||crypto.randomUUID();
  const result=await bookingAPI('create',{requestId:liveBooking.requestId,token:liveBooking.selected.token,name:booking.name,phone:booking.phone,address:booking.address,vehicle:booking.vehicle,pet:booking.pet&&['interior','complete'].includes(booking.pack),website:document.getElementById('booking-website')?.value||''});
+ if(!result.id||!result.start||!['ACCEPTED','PENDING'].includes(result.status))throw new Error('No booking confirmation was returned.');
  const pending=result.status==='PENDING';
  document.getElementById('booking-panel').innerHTML='<h2>'+(pending?'Appointment Requested':'Appointment Booked')+'</h2><div class="booking-summary"><strong>'+escapeHtml(packages.find(p=>p.id===booking.pack).name)+'</strong><span>'+escapeHtml(booking.date)+' · '+escapeHtml(arrivalLabel(result.start))+' Central Time</span><span>Reference: '+escapeHtml(result.id)+'</span></div><p>'+(pending?'Your request is in our calendar and awaits approval. We will contact you to confirm.':'Your appointment has been added to our calendar. We look forward to detailing your vehicle.')+'</p><p>We’ll text the mobile number you provided if anything changes or we’re running behind.</p>';
- }catch(e){error.textContent=e.message;if(e.code==='SLOT_TAKEN'||e.code==='SLOT_EXPIRED'){liveBooking.selected=null;liveBooking.requestId=null;}button.disabled=false;button.textContent='Book Appointment →'}
+ }catch(e){
+  if(!e.status||e.status>=500){
+   error.textContent='We couldn’t verify your booking. Use Retry Confirmation to check the same request, or call or text (913) 905-9935 before starting a new booking.';
+   button.disabled=false;
+   button.textContent='Retry Confirmation';
+  }else{
+   error.textContent=e.message;
+   if(e.code==='SLOT_TAKEN'||e.code==='SLOT_EXPIRED'){
+    liveBooking.selected=null;
+    liveBooking.requestId=null;
+   }
+   controls.forEach(control=>control.disabled=false);
+   button.textContent='Book Appointment →';
+  }
+ }
  finally{liveBooking.sending=false}
 }
 document.getElementById('app').innerHTML=header()+(page==='terms'||page==='privacy'?document.getElementById('app').innerHTML:page==='index'?home():page==='services'?detail():page==='booking'?bookingPage():about())+foot()+`<div class="quiz-overlay" id="quiz-overlay" onclick="if(event.target===this)closeQuiz()"><div class="quiz-dialog"><button class="quiz-close" aria-label="Close quiz" onclick="closeQuiz()">×</button><div id="quiz-content"></div></div></div>`;if(page==='booking')drawBooking();
