@@ -114,6 +114,14 @@ async function loadSquareTimes(date){
  finally{if(request===liveBooking.request){liveBooking.loading=false;if(booking.step===2)drawLiveDates()}}
 }
 function chooseSquareTime(i){liveBooking.selected=liveBooking.slots[i];liveBooking.requestId=null;booking.time=arrivalLabel(liveBooking.selected.start);drawLiveDates();}
+function newBookingRequestId(){
+ if(typeof crypto.randomUUID==='function')return crypto.randomUUID();
+ const bytes=crypto.getRandomValues(new Uint8Array(16));
+ bytes[6]=(bytes[6]&15)|64;
+ bytes[8]=(bytes[8]&63)|128;
+ const hex=Array.from(bytes,byte=>byte.toString(16).padStart(2,'0')).join('');
+ return [hex.slice(0,8),hex.slice(8,12),hex.slice(12,16),hex.slice(16,20),hex.slice(20)].join('-');
+}
 async function submitSquareBooking(){
  if(liveBooking.sending)return;
  const error=document.getElementById('booking-error'),button=document.getElementById('submit-booking');
@@ -123,7 +131,7 @@ async function submitSquareBooking(){
  controls.forEach(control=>control.disabled=true);
  button.textContent='Booking…';error.textContent='';
  try{
- liveBooking.requestId=liveBooking.requestId||crypto.randomUUID();
+ liveBooking.requestId=liveBooking.requestId||newBookingRequestId();
  const result=await bookingAPI('create',{requestId:liveBooking.requestId,token:liveBooking.selected.token,name:booking.name,phone:booking.phone,address:booking.address,vehicle:booking.vehicle,pet:booking.pet&&['interior','complete'].includes(booking.pack),website:document.getElementById('booking-website')?.value||''});
  if(!result.id||!result.start||!['ACCEPTED','PENDING'].includes(result.status))throw new Error('No booking confirmation was returned.');
  const pending=result.status==='PENDING';
