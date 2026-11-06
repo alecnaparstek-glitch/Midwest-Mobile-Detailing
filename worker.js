@@ -71,7 +71,7 @@ function allowedDailyStart(iso,weekday,duration){
   const time=new Intl.DateTimeFormat("en-GB",{timeZone:ZONE,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(iso));
   const [hour,minute]=time.split(":").map(Number);
   const end=hour*60+minute+duration;
-  if(weekday===0)return ["07:00","10:30"].includes(time)&&end<=14*60;
+  if(weekday===0)return ["08:00","10:30"].includes(time)&&end<=14*60;
   if(weekday===6)return ["08:00","11:00","14:00","17:00"].includes(time)&&end<=20*60;
   return time==="18:15"||time==="15:30"&&end<=20*60;
 }
