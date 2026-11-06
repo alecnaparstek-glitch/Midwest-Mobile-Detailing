@@ -76,7 +76,7 @@ function nextBooking(){if(booking.step<3){booking.step++;drawBooking();document.
 function clearSquareChoice(){liveBooking.request++;liveBooking.slots=[];liveBooking.selected=null;liveBooking.requestId=null;liveBooking.error='';liveBooking.loading=false;booking.date='';booking.time='';}
 const liveBooking={slots:[],selected:null,loading:false,error:"",requestId:null,request:0,sending:false};
 const businessDay=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/Chicago',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
-const arrivalLabel=start=>{const format=new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',hour:'numeric',minute:'2-digit'});const date=new Date(start);const windowMinutes=format.format(date)==='5:45 PM'?15:30;return format.format(date)+' – '+format.format(new Date(date.getTime()+windowMinutes*60000));};
+const arrivalLabel=start=>{const format=new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',hour:'numeric',minute:'2-digit'});const date=new Date(start);const windowMinutes=format.format(date)==='6:15 PM'?15:30;return format.format(date)+' – '+format.format(new Date(date.getTime()+windowMinutes*60000));};
 async function bookingAPI(path,body){const r=await fetch('/api/booking/'+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const data=await r.json();if(!r.ok){const e=new Error(data.error||'Unable to load booking. Please try again.');e.code=data.code;throw e;}return data;}
 function drawLiveDates(){
  const day=businessDay(),base=new Date(day+'T12:00:00Z');base.setUTCDate(base.getUTCDate()+booking.week*7);

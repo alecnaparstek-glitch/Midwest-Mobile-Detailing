@@ -71,8 +71,8 @@ function allowedDailyStart(iso,weekday,duration){
   const time=new Intl.DateTimeFormat("en-GB",{timeZone:ZONE,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(iso));
   const [hour,minute]=time.split(":").map(Number);
   const weekend=weekday===0||weekday===6;
-  const starts=weekend?["08:00","11:00","14:00","17:00"]:["15:30","17:45"];
-  return starts.includes(time)&&(!weekend&&time==="17:45"||hour*60+minute+duration<=20*60);
+  const starts=weekend?["08:00","11:00","14:00","17:00"]:["15:30","18:15"];
+  return starts.includes(time)&&(!weekend&&time==="18:15"||hour*60+minute+duration<=20*60);
 }
 async function dailyBookingCount(env,day,limit){
   const start=new Date(Date.parse(day+"T00:00:00Z")-86400000).toISOString();
