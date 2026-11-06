@@ -115,9 +115,9 @@ async function readToken(env,token){
   try{
     const [body,sig]=token.split("."),payload=JSON.parse(atob(body));
     const {key,bytes}=await sign(env,payload);
-    if(!await crypto.subtle.verify("HMAC",key,Uint8Array.from(atob(sig),c=>c.charCodeAt(0)),bytes)||payload.expires<Date.now())throw Error();
+    if(!await crypto.subtle.verify("HMAC",key,Uint8Array.from(atob(sig),c=>c.charCodeAt(0)),bytes))throw Error();
     selection(payload);return payload;
-  }catch{throw new BookingError("Your time selection expired. Please choose a time again.",409,"SLOT_EXPIRED")}
+  }catch{throw new BookingError("Your time selection is invalid. Please choose a time again.",409,"SLOT_EXPIRED")}
 }
 export default {
   async fetch(request,env){
@@ -178,6 +178,7 @@ export class BookingCoordinator {
       if(attempt.hash!==hash)return reply({error:"This request has changed. Please choose a time again."},409);
       return this.finish(input,key,hash,attempt.payload);
     }
+    if(input.slot.expires<Date.now())throw new BookingError("Your time selection expired. Please choose a time again.",409,"SLOT_EXPIRED");
     const slots=await availability(this.env,input.slot);
     const slot=slots.find(a=>a.start_at===input.slot.start&&a.appointment_segments[0].team_member_id===input.slot.team);
     if(!slot)return reply({error:"That time is no longer available. Please choose another.",code:"SLOT_TAKEN"},409);
