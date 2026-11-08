@@ -72,7 +72,6 @@ function allowedDailyStart(iso,weekday,duration){
   const [hour,minute]=time.split(":").map(Number);
   const end=hour*60+minute+duration;
   if(weekday===0)return ["08:00","10:30"].includes(time)&&end<=14*60;
-  if(weekday===6)return ["08:00","11:00","14:00","17:00"].includes(time)&&end<=20*60;
   return time==="18:15"||time==="15:30"&&end<=20*60;
 }
 async function dailyBookingCount(env,day,limit){
@@ -92,8 +91,8 @@ async function dailyBookingCount(env,day,limit){
 
 async function availability(env,input){
   const range=dateRange(input.date),weekday=bookingDay(input.date);
-  if(weekday===5)return [];
-  const limit=weekday===6?4:2;
+  if([1,5,6].includes(weekday))return [];
+  const limit=2;
   const profile=(await square(env,"/bookings/business-booking-profile")).business_booking_profile;
   if(!profile?.booking_enabled||!profile?.support_seller_level_writes)throw new BookingError("Online booking is temporarily unavailable. Please contact us to schedule.",503,"API_ACCESS");
   const segments=await segmentsFor(env,input);

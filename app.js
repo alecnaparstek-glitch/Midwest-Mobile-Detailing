@@ -104,8 +104,20 @@ async function bookingAPI(path,body){
 }
 function drawLiveDates(){
  const day=businessDay(),base=new Date(day+'T12:00:00Z');base.setUTCDate(base.getUTCDate()+booking.week*7);
- const days=Array.from({length:7},(_,i)=>{const d=new Date(base);d.setUTCDate(base.getUTCDate()+i);return {iso:d.toISOString().slice(0,10),label:d.toLocaleDateString('en-US',{timeZone:'UTC',weekday:'short',month:'short',day:'numeric'})};});
- document.getElementById('booking-panel').innerHTML='<h2>Pick a Day & Arrival Window</h2><p class="muted">Choose a date to see available appointments. All times are Central Time.</p><div class="week-nav"><button class="week-arrow" aria-label="Previous week" onclick="changeWeek(-1)" '+(booking.week===0?'disabled':'')+'>←</button><strong>'+days[0].label+' – '+days[6].label+'</strong><button class="week-arrow" aria-label="Next week" onclick="changeWeek(1)" '+(booking.week>=11?'disabled':'')+'>→</button></div><div class="date-grid week-grid">'+days.map(d=>'<button class="date-tile '+(booking.date===d.iso?'selected':'')+'" onclick="setBookingDate(\''+d.iso+'\')">'+d.label+'</button>').join('')+'</div>'+
+ const days=Array.from({length:7},(_,i)=>{
+  const d=new Date(base);
+  d.setUTCDate(base.getUTCDate()+i);
+  return {
+   iso:d.toISOString().slice(0,10),
+   label:d.toLocaleDateString('en-US',{timeZone:'UTC',weekday:'short',month:'short',day:'numeric'}),
+   closed:[1,5,6].includes(d.getUTCDay())
+  };
+ });
+ const dateTiles=days.map(d=>d.closed
+  ? `<button class="date-tile" disabled aria-label="${d.label} (closed)">${d.label}</button>`
+  : `<button class="date-tile ${booking.date===d.iso?'selected':''}" onclick="setBookingDate('${d.iso}')">${d.label}</button>`
+ ).join('');
+ document.getElementById('booking-panel').innerHTML='<h2>Pick a Day & Arrival Window</h2><p class="muted">Choose a date to see available appointments. All times are Central Time.</p><div class="week-nav"><button class="week-arrow" aria-label="Previous week" onclick="changeWeek(-1)" '+(booking.week===0?'disabled':'')+'>←</button><strong>'+days[0].label+' – '+days[6].label+'</strong><button class="week-arrow" aria-label="Next week" onclick="changeWeek(1)" '+(booking.week>=11?'disabled':'')+'>→</button></div><div class="date-grid week-grid">'+dateTiles+'</div>'+
  (booking.date?'<h3 class="slot-heading">Arrival windows</h3>'+(liveBooking.loading?'<p role="status">Checking availability…</p>':liveBooking.error?'<p role="alert">'+escapeHtml(liveBooking.error)+'</p><button class="btn secondary" onclick="loadSquareTimes(booking.date)">Try Again</button>':liveBooking.slots.length?'<div class="time-grid">'+liveBooking.slots.map((slot,i)=>'<button class="time-tile '+(liveBooking.selected?.token===slot.token?'selected':'')+'" onclick="chooseSquareTime('+i+')">'+escapeHtml(arrivalLabel(slot.start))+' · '+durationLabel(slot.duration)+'</button>').join('')+'</div>':'<p class="muted">No available appointments for this service on this day. Please choose another date.</p>'):'<p class="muted">Choose a date to see arrival windows.</p>')+
  '<p class="availability-note">Availability comes from our scheduling calendar and is checked again when you book. We’ll arrive within your selected window.</p><div class="actions"><button class="btn secondary" onclick="prevBooking()">← Back</button><button class="btn" '+(liveBooking.selected&&!liveBooking.loading?'':'disabled')+' onclick="nextBooking()">Your Details →</button></div>';
 }

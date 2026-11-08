@@ -60,7 +60,8 @@ body{background:#fffdfa}
 .upgrade-offer p{color:#30271f!important}
 .week-nav,.date-tile,.time-tile,.availability-note,.booking-summary,.service-area-note,.warning,.soft-box,.quiz-teaser{background:#fffaf2!important;border-color:#ebdac0!important;color:#2d261f!important}
 .date-tile.selected,.time-tile.selected{background:#fa5a0a!important;border-color:#fa5a0a!important;color:#fff!important}
-.date-tile:hover:not(.selected),.time-tile:hover:not(.selected){border-color:#f46b1c!important;background:#fff3e5!important}
+.date-tile:hover:not(.selected):not(:disabled),.time-tile:hover:not(.selected){border-color:#f46b1c!important;background:#fff3e5!important}
+.date-tile:disabled{background:#f1f1f1!important;border-color:#e0e0e0!important;color:#666!important;cursor:default}
 .week-arrow{background:#fffdf9;border-color:#f7a16b;color:#c34b0a}
 .week-arrow:disabled{opacity:.3}
 .package-choice{background:#fffdf8!important;border-color:#efdbc4!important}
