@@ -266,15 +266,41 @@ html{scroll-behavior:smooth}
   border: 2px solid #fff !important;
   box-shadow: 0 0 0 1px var(--orange);
 }
+body[data-page="booking"] .progress-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.progress-label svg {
+  width: 1.15em;
+  height: 1.15em;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: #bc3900;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 body[data-page="booking"] .package-choice {
-  background: #fff !important;
-  border: 4px solid #ed854d !important;
+  background:
+    repeating-linear-gradient(160deg, transparent 0 46px, #ffffff19 47px 48px),
+    linear-gradient(180deg, var(--orange) 0% 40%, #b93600 78%) !important;
+  border: 4px solid #fff !important;
   border-radius: 14px;
   padding: 8px 8px 12px;
+  color: #fff;
+  box-shadow: 0 3px 12px #8c310327;
+}
+body[data-page="booking"] .package-choice strong {
+  color: inherit;
 }
 body[data-page="booking"] .package-choice.selected {
-  border-color: var(--deep) !important;
-  box-shadow: 0 0 0 2px var(--deep);
+  box-shadow: 0 0 0 2px var(--deep), 0 4px 12px #8c310340;
+}
+body[data-page="booking"] .package-choice:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
 }
 body[data-page="booking"] .quote-result,
 body[data-page="booking"] .booking-summary {
