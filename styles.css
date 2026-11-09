@@ -258,5 +258,34 @@ html{scroll-behavior:smooth}
   .deal-membership > p { margin: 0; }
 }
 
+/* Frames on Deals and Booking use the same orange-and-white palette as the service cards. */
+.deal-card,
+body[data-page="booking"] .booking-shell {
+  border: 2px solid var(--orange);
+}
+.deal-action summary,
+body[data-page="booking"] .date-tile.selected,
+body[data-page="booking"] .time-tile.selected {
+  border: 2px solid #fff !important;
+  box-shadow: 0 0 0 1px var(--orange);
+}
+body[data-page="booking"] .page-banner::before {
+  content: '';
+  position: absolute;
+  inset: 11px max(11px, calc((100% - 1200px) / 2));
+  border: 3px solid #fff;
+  border-radius: 15px;
+  pointer-events: none;
+}
+body[data-page="booking"] .package-choice,
+body[data-page="booking"] .quote-result,
+body[data-page="booking"] .booking-summary {
+  border-color: #ed854d !important;
+}
+body[data-page="booking"] .package-choice.selected {
+  border-color: var(--deep) !important;
+  box-shadow: inset 0 0 0 1px var(--deep);
+}
+
 /* Policy pages share the site palette, typography, header and footer. */
 .footer-legal{display:flex;flex-wrap:wrap;gap:12px 24px;width:100%;font-size:13px}.footer-legal a{text-decoration:underline;text-underline-offset:3px}.footer-legal a:hover{color:var(--orange)}.policy-copy{max-width:800px;margin:auto;line-height:1.75;overflow-wrap:anywhere}.policy-copy h2{font:800 29px/1.2 "Barlow Condensed",Impact,sans-serif;text-transform:uppercase;margin:32px 0 12px}.policy-copy p{margin:0 0 16px}.policy-copy a{color:var(--deep);text-decoration:underline;text-underline-offset:3px}.policy-copy ul{padding-left:22px}.policy-copy li{margin-bottom:8px}.policy-updated{font-size:14px;color:#595048}.policy-copy :first-child{margin-top:0}
