@@ -17,10 +17,10 @@ const steps=[
  {label:'Date & Time', description:'Pick an arrival window', icon:'M4 5h16v15H4zM4 9h16M8 3v4m8-4v4m-4 5v3l2 1'},
  {label:'Details', description:'Contact information', icon:'M8 5H5v16h14V5h-3M9 3h6v4H9zM8 11h8m-8 4h8'}
 ];
-const bookingProgress=()=>steps.map(({label,description,icon},i)=>`
+const bookingProgress=()=>steps.map(({label,description,icon})=>`
  <div class="progress-item">
-  <b>${i+1}</b>
-  <strong class="progress-label"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="${icon}"/></svg>${label}</strong>
+  <b class="progress-marker" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="${icon}"/></svg></b>
+  <strong>${label}</strong>
   <span>${description}</span>
  </div>`).join('');
 function updateBookingProgress(){

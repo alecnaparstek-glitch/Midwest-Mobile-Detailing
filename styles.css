@@ -266,34 +266,34 @@ html{scroll-behavior:smooth}
   border: 2px solid #fff !important;
   box-shadow: 0 0 0 1px var(--orange);
 }
-body[data-page="booking"] .progress-label {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-.progress-label svg {
-  width: 1.15em;
-  height: 1.15em;
-  flex: 0 0 auto;
+.progress-marker svg {
+  width: 19px;
+  height: 19px;
   fill: none;
-  stroke: #bc3900;
+  stroke: currentColor;
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+.progress-item .progress-marker {
+  background: #f2eae2;
+  color: #6f5744;
+}
+.progress-item.done .progress-marker {
+  background: #ffe9d9;
+  color: var(--deep);
+}
+.progress-item.active .progress-marker {
+  background: var(--orange);
+  color: #fff;
+}
 body[data-page="booking"] .package-choice {
-  background:
-    repeating-linear-gradient(160deg, transparent 0 46px, #ffffff12 47px 48px),
-    linear-gradient(180deg, var(--orange) 0% 40%, #cb3900 74%) !important;
+  background: #fff7ed !important;
   border: 4px solid #fff !important;
   border-radius: 14px;
   padding: 8px 8px 12px;
-  color: #fff;
+  color: var(--ink);
   box-shadow: 0 3px 12px #8c310327;
-}
-body[data-page="booking"] .package-choice strong {
-  color: inherit;
 }
 body[data-page="booking"] .package-choice.selected {
   box-shadow: 0 0 0 2px var(--deep), 0 4px 12px #8c310340;
