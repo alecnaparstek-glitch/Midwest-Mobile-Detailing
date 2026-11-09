@@ -120,12 +120,12 @@ function drawLiveDates(){
   return {
    iso:d.toISOString().slice(0,10),
    label:d.toLocaleDateString('en-US',{timeZone:'UTC',weekday:'short',month:'short',day:'numeric'}),
-   closed:bookingPolicy.bookingDayClosed(d.toISOString().slice(0,10)) ||
-    (winterFlow()&&!bookingPolicy.winterOfferEligible(d.toISOString().slice(0,10)))
+   closed:bookingPolicy.bookingDayClosed(d.toISOString().slice(0,10)),
+   outsideOffer:winterFlow()&&!bookingPolicy.winterOfferEligible(d.toISOString().slice(0,10))
   };
  });
- const dateTiles=days.map(d=>d.closed
-  ? `<button class="date-tile" disabled aria-label="${d.label} (closed)">${d.label}</button>`
+ const dateTiles=days.map(d=>d.closed||d.outsideOffer
+  ? `<button class="date-tile" disabled aria-label="${d.label} (${d.closed?'closed':'outside offer dates'})">${d.label}</button>`
   : `<button class="date-tile ${booking.date===d.iso?'selected':''}" onclick="setBookingDate('${d.iso}')">${d.label}</button>`
  ).join('');
  document.getElementById('booking-panel').innerHTML='<h2>Pick a Day & Arrival Window</h2><p class="muted">Choose a date to see available appointments. All times are Central Time.</p>'+(winterFlow()?'<p class="muted">Offer applies to eligible Monday–Wednesday Cabin Refresh appointments through February 28. <a href="deals.html#winter">Back to Deals</a></p>':'')+'<div class="week-nav"><button class="week-arrow" aria-label="Previous week" onclick="changeWeek(-1)" '+(booking.week===0?'disabled':'')+'>←</button><strong>'+days[0].label+' – '+days[6].label+'</strong><button class="week-arrow" aria-label="Next week" onclick="changeWeek(1)" '+(booking.week>=11?'disabled':'')+'>→</button></div><div class="date-grid week-grid">'+dateTiles+'</div>'+

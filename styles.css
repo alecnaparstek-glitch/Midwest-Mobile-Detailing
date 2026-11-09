@@ -242,12 +242,13 @@ html{scroll-behavior:smooth}
 @media (max-width: 650px) {
   .deals-hero {
     aspect-ratio: auto;
-    min-height: 315px;
-    display: flex;
-    align-items: end;
-    background-image: linear-gradient(0deg,#121c2af5,transparent 72%),url('assets/winter-deals-bucket.jpg');
-    background-position: center,center 46%;
-    background-size: cover;
+    background: #182535;
+  }
+  .deals-hero::before {
+    content: '';
+    display: block;
+    height: clamp(210px, 62vw, 310px);
+    background: url('assets/winter-deals-bucket.jpg') center / cover no-repeat;
   }
   .deals-hero-copy { position: static; width: auto; height: auto; clip-path: none; padding: 24px; color: white; }
   .deals-hero h1 { margin: 0; font: italic 900 46px/.95 'Barlow Condensed', Impact, sans-serif; text-transform: uppercase; }
