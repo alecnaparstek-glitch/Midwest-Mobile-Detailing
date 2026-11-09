@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#ff580b">
+  <meta name="description" content="See Midwest Mobile Detailing’s referral, two-car and winter offers in Johnson County, Kansas.">
+  <title>Deals &amp; Memberships | Midwest Mobile Detailing</title>
+  <link rel="canonical" href="https://midwestdetailingkc.com/deals">
+  <link rel="icon" href="/favicon.ico?v=2" sizes="16x16 32x32 48x48">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css?v=winter-deals">
+</head>
+<body data-page="deals">
+  <div id="app">
+    <main>
+      <section class="deals-hero" aria-labelledby="deals-heading">
+        <div class="deals-hero-copy">
+          <h1 id="deals-heading">Deals &amp; Memberships</h1>
+          <p>Detailing offers for Johnson County.</p>
+        </div>
+      </section>
+      <section class="wrap deals-content" aria-label="Detailing offers">
+        <div class="deals-grid">
+          <article class="deal-card" id="referral">
+            <div class="deal-mark">
+              <svg viewBox="0 0 48 36" aria-hidden="true"><circle cx="15" cy="9" r="6"/><circle cx="34" cy="9" r="6"/><path d="M2 34c0-8 5-14 13-14s13 6 13 14H2Zm29-14h3c7 0 12 6 12 14H32"/></svg>
+            </div>
+            <h2>Refer a Friend</h2>
+            <p class="deal-price">Get $20 off</p>
+            <p>New here? If a Midwest customer referred you, you can get $20 off your first Cabin Refresh or Full Reset after we verify the referral.</p>
+            <details class="deal-action">
+              <summary class="btn">Referral Details</summary>
+              <p>Enter the customer’s name when you book. We’ll review it and let you know if you qualify. If approved, we’ll take $20 off when you pay after the detail.</p>
+              <a href="/booking">Continue to booking →</a>
+            </details>
+          </article>
+          <article class="deal-card" id="two-cars">
+            <div class="deal-mark">
+              <svg viewBox="0 0 48 36" aria-hidden="true"><path d="M2 26V15l4-8h12l4 8v11H2Zm0-11h20M5 26v5m14-5v5M7 20h2m6 0h2m9 6V15l4-8h12l4 8v11H26Zm0-11h20m-17 11v5m14-5v5m-12-11h2m6 0h2"/></svg>
+            </div>
+            <h2>Two Cars, One Driveway</h2>
+            <p class="deal-price">Save $20</p>
+            <p>Book two Cabin Refresh or Full Reset details for one household at the same address on the same day. Save $20 on the lower-priced detail.</p>
+            <details class="deal-action">
+              <summary class="btn">Book Two Cars</summary>
+              <p>Text us both vehicles, the service you want for each, and your preferred date. We’ll find a time for both details and confirm the price.</p>
+              <a href="sms:+19139059935?body=Hi%20Midwest%21%20I%27d%20like%20to%20book%20the%20Two%20Cars%2C%20One%20Driveway%20deal.">Text to book two cars →</a>
+            </details>
+          </article>
+          <article class="deal-card" id="winter">
+            <div class="deal-mark">
+              <svg viewBox="0 0 48 36" aria-hidden="true"><path d="M24 1v34M9 9l30 18M9 27 39 9M19 4l5 5 5-5m-10 28 5-5 5 5M10 15l7-1-1-7m22 14-7 1 1 7m-22-8 7 1-1 7m22-14-7-1 1-7"/></svg>
+              <span>Seasonal Special</span>
+            </div>
+            <h2>Winter Weekday Special</h2>
+            <p class="deal-price">Get $20 off</p>
+            <p>Save $20 on a Cabin Refresh on available Mondays, Tuesdays, and Wednesdays through February 28, 2027.</p>
+            <details class="deal-action">
+              <summary class="btn">Check Availability</summary>
+              <p>Start here to see eligible days in the booking calendar. Your estimate will show the $20 discount after you choose an eligible appointment time.</p>
+              <form method="post" action="/api/booking/winter-offer">
+                <button type="submit" class="deal-link">See eligible appointment times →</button>
+              </form>
+            </details>
+          </article>
+        </div>
+        <article class="deal-membership" id="membership">
+          <svg viewBox="0 0 48 36" aria-hidden="true"><rect x="5" y="5" width="38" height="30" rx="4"/><path d="M14 1v8m20-8v8M5 14h38m-29 7h3m6 0h3m6 0h3m-21 7h3m6 0h3m6 0h3"/></svg>
+          <div class="membership-title">
+            <h2>Winter Interior Membership</h2>
+            <p>Keep It Clean</p>
+            <strong class="deal-price">$129<small>/month</small></strong>
+          </div>
+          <p>One interior upkeep visit per month during winter, with priority scheduling. Available after a Cabin Refresh.</p>
+          <details class="deal-action">
+            <summary class="btn">Membership Details</summary>
+            <p>Once your Cabin Refresh is complete, text us to arrange your monthly winter visits.</p>
+            <a href="sms:+19139059935?body=Hi%20Midwest%21%20I%27m%20interested%20in%20the%20Keep%20It%20Clean%20winter%20interior%20membership.">Text about membership →</a>
+          </details>
+        </article>
+        <p class="deals-terms">One deal per appointment. Membership billed separately.</p>
+      </section>
+    </main>
+  </div>
+  <script src="/app.js?v=winter-deals" defer></script>
+</body>
+</html>

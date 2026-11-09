@@ -1,3 +1,5 @@
+import { bookingDayClosed, winterOfferEligible, WINTER_DISCOUNT } from "./booking-policy.js";
+
 const LOCATION = "LR9S8A5TFKB2S";
 const ZONE = "America/Chicago";
 const PACKS = { interior: "Midwest Cabin Refresh", exterior: "Midwest Fresh Finish", complete: "Midwest Full Reset" };
@@ -91,7 +93,7 @@ async function dailyBookingCount(env,day,limit){
 
 async function availability(env,input){
   const range=dateRange(input.date),weekday=bookingDay(input.date);
-  if([1,5,6].includes(weekday))return [];
+  if(bookingDayClosed(input.date))return [];
   const limit=2;
   const profile=(await square(env,"/bookings/business-booking-profile")).business_booking_profile;
   if(!profile?.booking_enabled||!profile?.support_seller_level_writes)throw new BookingError("Online booking is temporarily unavailable. Please contact us to schedule.",503,"API_ACCESS");
@@ -110,13 +112,24 @@ async function slotToken(env,payload){
   const signature=new Uint8Array(await crypto.subtle.sign("HMAC",key,bytes));
   return btoa(JSON.stringify(payload))+"."+btoa(String.fromCharCode(...signature));
 }
-async function readToken(env,token){
-  try{
+async function readSignedPayload(env,token){
     const [body,sig]=token.split("."),payload=JSON.parse(atob(body));
     const {key,bytes}=await sign(env,payload);
     if(!await crypto.subtle.verify("HMAC",key,Uint8Array.from(atob(sig),c=>c.charCodeAt(0)),bytes))throw Error();
+    return payload;
+}
+async function readToken(env,token){
+  try{
+    const payload=await readSignedPayload(env,token);
     selection(payload);return payload;
   }catch{throw new BookingError("Your time selection is invalid. Please choose a time again.",409,"SLOT_EXPIRED")}
+}
+async function winterOfferDiscount(env,token,choice,date){
+  if(!token || choice.pack!=="interior" || !winterOfferEligible(date))return 0;
+  try{
+    const claim=await readSignedPayload(env,token);
+    return claim.offer==="winter-weekday" && claim.expires>Date.now() ? WINTER_DISCOUNT : 0;
+  }catch{return 0;}
 }
 export default {
   async fetch(request,env){
@@ -131,16 +144,26 @@ export default {
           locationTimezone:(await square(env,"/locations/"+LOCATION)).location?.timezone,serviceDiagnostics:await catalog(env,true),sellerBookingWrites:profile.business_booking_profile?.support_seller_level_writes===true,packages:linked,bookableServiceNames:[...new Set(services.map(v=>v.item))]});
       }
       if(request.method!=="POST")return reply({error:"Method not allowed"},405);
+      if(url.pathname==="/api/booking/winter-offer"){
+        if(request.headers.get("Origin")!==url.origin)return reply({error:"Invalid request"},403);
+        const token=await slotToken(env,{offer:"winter-weekday",expires:Date.now()+24*60*60000});
+        const booking=new URL("/booking",url.origin);
+        booking.search=new URLSearchParams({package:"interior",offer:token});
+        return new Response(null,{status:303,headers:{Location:booking.href,"Cache-Control":"no-store"}});
+      }
       if(request.headers.get("Origin")!==url.origin||!request.headers.get("Content-Type")?.startsWith("application/json"))return reply({error:"Invalid request"},403);
       if(Number(request.headers.get("Content-Length")||0)>16000)return reply({error:"Request too large"},413);
       const raw=await request.text();if(raw.length>16000)return reply({error:"Request too large"},413);
       let input;try{input=JSON.parse(raw)}catch{return reply({error:"Invalid request"},400)}
       if(url.pathname==="/api/booking/availability"){
-        const choice=selection(input),slots=await availability(env,{...choice,date:input.date}),unique=new Map();
+        const choice=selection(input),unique=new Map();
+        const discount=await winterOfferDiscount(env,input.offer,choice,input.date);
+        if(input.offer&&choice.pack==="interior"&&!discount)throw new BookingError("This date or offer link is ineligible. Return to Deals to start a new offer booking.",400,"OFFER_INELIGIBLE");
+        const slots=await availability(env,{...choice,date:input.date});
         for(const a of slots){
           if(unique.has(a.start_at))continue;
-          const token=await slotToken(env,{...choice,date:input.date,start:a.start_at,team:a.appointment_segments[0].team_member_id,expires:Date.now()+15*60000});
-          unique.set(a.start_at,{start:a.start_at,token,duration:a.appointment_segments.reduce((n,s)=>n+s.duration_minutes,0)});
+          const token=await slotToken(env,{...choice,date:input.date,start:a.start_at,team:a.appointment_segments[0].team_member_id,expires:Date.now()+15*60000,...(discount?{discount}:{})});
+          unique.set(a.start_at,{start:a.start_at,token,duration:a.appointment_segments.reduce((n,s)=>n+s.duration_minutes,0),...(discount?{discount}:{})});
         }
         return reply({slots:[...unique.values()],timezone:ZONE});
       }
@@ -150,9 +173,10 @@ export default {
         const name=safeText(input.name,100),address=safeText(input.address,300),vehicle=safeText(input.vehicle,120),phone=String(input.phone||"").replace(/\D/g,"");
         if(!name||address.length<8||!vehicle||!(/^1?\d{10}$/.test(phone)))throw new BookingError("Enter your name, a US phone number, vehicle, and full service address.",400,"INVALID_INPUT");
         const slot=await readToken(env,input.token||"");
+        const referral=slot.discount||!["interior","complete"].includes(slot.pack)?"":safeText(input.referral,100).replace(/[\r\n\t]+/g," ");
         if(!env.BOOKING_COORDINATOR)throw new BookingError("Online booking is temporarily unavailable.");
         const id=env.BOOKING_COORDINATOR.idFromName(LOCATION+":"+slot.date);
-        return env.BOOKING_COORDINATOR.get(id).fetch("https://booking.internal/create",{method:"POST",body:JSON.stringify({slot,name,address,vehicle,phone:"+"+(phone.length===10?"1":"")+phone,pet:input.pet===true,requestId:input.requestId,ip:request.headers.get("CF-Connecting-IP")||"unknown"})});
+        return env.BOOKING_COORDINATOR.get(id).fetch("https://booking.internal/create",{method:"POST",body:JSON.stringify({slot,name,address,vehicle,phone:"+"+(phone.length===10?"1":"")+phone,pet:input.pet===true,requestId:input.requestId,ip:request.headers.get("CF-Connecting-IP")||"unknown",...(referral?{referral}:{})})});
       }
       return reply({error:"Not found"},404);
     }catch(e){return reply({error:e instanceof BookingError?e.message:"Booking is temporarily unavailable. Please try again.",code:e.code||"UNAVAILABLE"},e.status||503)}
@@ -185,6 +209,8 @@ export class BookingCoordinator {
     const extras=input.slot.addOns.map(id=>ADDONS[id].name+(ADDONS[id].noteOnly?" (+$"+ADDONS[id].price+"; no additional appointment time)":""));
     const note=["Website booking",PACKS[input.slot.pack],"Vehicle: "+input.vehicle,"Service address: "+input.address,
       extras.length?"Add-ons: "+extras.join(", "):"",input.pet?"Heavy pet hair removal: price after inspection":"",
+      input.slot.discount?"Winter Weekday Special: apply $"+input.slot.discount+" off when collecting payment.":"",
+      input.referral?"Referral: "+input.referral+". Review eligibility before applying $20 off at payment.":"",
       "Arrival window: first 30 minutes of appointment. Water and electricity access required."].filter(Boolean).join("\n");
     const payload={idempotency_key:input.requestId,booking:{location_id:LOCATION,start_at:slot.start_at,customer_id:customer.customer.id,
       customer_note:note,appointment_segments:slot.appointment_segments.map(s=>({team_member_id:s.team_member_id,service_variation_id:s.service_variation_id,service_variation_version:s.service_variation_version,duration_minutes:s.duration_minutes}))}};
