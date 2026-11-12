@@ -3,10 +3,7 @@ export const WINTER_DISCOUNT = 20;
 const weekday = date => new Date(date + 'T12:00:00Z').getUTCDay();
 
 export function bookingDayClosed(date) {
-  if (date >= '2026-11-23' && date <= '2026-11-29') {
-    return date === '2026-11-29';
-  }
-  return date === '2026-11-09' || [5, 6].includes(weekday(date));
+  return [1, 2, 3, 4, 5].includes(weekday(date));
 }
 
 export function winterOfferEligible(date) {
