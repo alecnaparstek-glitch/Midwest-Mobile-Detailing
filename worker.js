@@ -1,9 +1,9 @@
-import { bookingDayClosed, winterOfferEligible, WINTER_DISCOUNT } from "./booking-policy.js";
+import { bookingDayClosed, winterOfferEligible, WINTER_DISCOUNT, BOOKING_START_TIMES } from "./booking-policy.js";
 
 const LOCATION = "LR9S8A5TFKB2S";
 const ZONE = "America/Chicago";
 const PACKS = { interior: "Midwest Cabin Refresh", exterior: "Midwest Fresh Finish", complete: "Midwest Full Reset" };
-const ADDONS = { ceramic: { name: "Ceramic Wax", price: 20, noteOnly: true, packs: ["exterior","complete"] }, stain: { name: "Heavy Stain Removal", price: 40, noteOnly: true, packs: ["interior","complete"] } };
+const ADDONS = { stain: { name: "Heavy Stain Removal", price: 40, noteOnly: true, packs: ["interior","complete"] } };
 const reply = (value, status=200) => new Response(JSON.stringify(value), {status,headers:{"Content-Type":"application/json","Cache-Control":"no-store","X-Content-Type-Options":"nosniff"}});
 class BookingError extends Error { constructor(message,status=503,code="SETUP_REQUIRED"){super(message);this.status=status;this.code=code;} }
 async function square(env,path,body) {
@@ -48,7 +48,7 @@ function selectService(services,name,tier,override){
 }
 function selection(input){
   if(!Object.hasOwn(PACKS,input.pack)||!Number.isInteger(input.size)||input.size<0||input.size>2)throw new BookingError("Select a package and vehicle.",400,"INVALID_INPUT");
-  if(!Array.isArray(input.addOns)||input.addOns.length>2||new Set(input.addOns).size!==input.addOns.length||input.addOns.some(id=>!ADDONS[id]?.packs.includes(input.pack)))throw new BookingError("Invalid add-on selection.",400,"INVALID_INPUT");
+  if(!Array.isArray(input.addOns)||input.addOns.length>Object.keys(ADDONS).length||new Set(input.addOns).size!==input.addOns.length||input.addOns.some(id=>!ADDONS[id]?.packs.includes(input.pack)))throw new BookingError("Invalid add-on selection.",400,"INVALID_INPUT");
   return {pack:input.pack,size:input.size,addOns:input.addOns};
 }
 async function segmentsFor(env,input){
@@ -73,8 +73,9 @@ function allowedDailyStart(iso,weekday,duration){
   const time=new Intl.DateTimeFormat("en-GB",{timeZone:ZONE,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(iso));
   const [hour,minute]=time.split(":").map(Number);
   const end=hour*60+minute+duration;
-  if(weekday===6)return ["13:30","15:30"].includes(time)&&end<=19*60;
-  if(weekday===0)return hour*60+minute>=8*60&&minute%30===0&&end<=18*60;
+  if(!BOOKING_START_TIMES[weekday]?.includes(time))return false;
+  if(weekday===6)return end<=19*60;
+  if(weekday===0)return end<=18*60;
   return false;
 }
 async function dailyBookingCount(env,day,limit){
@@ -95,7 +96,7 @@ async function dailyBookingCount(env,day,limit){
 async function availability(env,input){
   const range=dateRange(input.date),weekday=bookingDay(input.date);
   if(bookingDayClosed(input.date))return [];
-  const limit=2;
+  const limit=BOOKING_START_TIMES[weekday]?.length||0;
   const profile=(await square(env,"/bookings/business-booking-profile")).business_booking_profile;
   if(!profile?.booking_enabled||!profile?.support_seller_level_writes)throw new BookingError("Online booking is temporarily unavailable. Please contact us to schedule.",503,"API_ACCESS");
   const segments=await segmentsFor(env,input);
