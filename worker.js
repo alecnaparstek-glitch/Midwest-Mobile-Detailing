@@ -1,4 +1,4 @@
-import { bookingDayClosed, winterOfferEligible, WINTER_DISCOUNT, BOOKING_START_TIMES } from "./booking-policy.js";
+import { bookingDayClosed, winterOfferEligible, WINTER_DISCOUNT, bookingStartTimes } from "./booking-policy.js";
 
 const LOCATION = "LR9S8A5TFKB2S";
 const ZONE = "America/Chicago";
@@ -74,7 +74,7 @@ function allowedDailyStart(iso,weekday,duration){
   const time=localStartTime(iso);
   const [hour,minute]=time.split(":").map(Number);
   const end=hour*60+minute+duration;
-  if(!BOOKING_START_TIMES[weekday]?.includes(time))return false;
+  if(!bookingStartTimes(dayOf(iso)).includes(time))return false;
   if(weekday===6)return end<=19*60;
   if(weekday===0)return end<=18*60;
   return false;
@@ -105,8 +105,8 @@ async function availability(env,input){
   const r=await square(env,"/bookings/availability/search",{query:{filter:{location_id:LOCATION,start_at_range:range,segment_filters:segments.map(s=>({service_variation_id:s.id}))}}});
   const slots=(r.availabilities||[]).filter(a=>dayOf(a.start_at)===input.date&&Date.parse(a.start_at)>Date.now()&&allowedDailyStart(a.start_at,weekday,a.appointment_segments.reduce((total,segment)=>total+segment.duration_minutes,0)));
   if(weekday===6){
-    // Prefer 2 p.m.; show just one nearby opening if Square does not offer it.
-    const preferred=BOOKING_START_TIMES[6].find(time=>slots.some(a=>localStartTime(a.start_at)===time));
+    // Show one opening from this date's allowed start times, in preference order.
+    const preferred=bookingStartTimes(input.date).find(time=>slots.some(a=>localStartTime(a.start_at)===time));
     return slots.filter(a=>localStartTime(a.start_at)===preferred);
   }
   return slots;

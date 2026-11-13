@@ -5,10 +5,19 @@ export const BOOKING_START_TIMES = Object.freeze({
   6: Object.freeze(["14:00", "13:30", "14:30"])
 });
 
+const DATE_START_TIMES = Object.freeze({
+  '2026-11-21': Object.freeze(["13:00"])
+});
+
+export function bookingStartTimes(date) {
+  return DATE_START_TIMES[date] || BOOKING_START_TIMES[weekday(date)] || [];
+}
+
 const weekday = date => new Date(date + 'T12:00:00Z').getUTCDay();
 
 export function bookingDayClosed(date) {
-  return [1, 2, 3, 4, 5].includes(weekday(date));
+  return (date >= '2026-11-23' && date <= '2026-11-29') ||
+    [1, 2, 3, 4, 5].includes(weekday(date));
 }
 
 export function winterOfferEligible(date) {
