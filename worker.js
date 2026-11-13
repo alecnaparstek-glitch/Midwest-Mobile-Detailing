@@ -69,8 +69,9 @@ function dateRange(day){
 function bookingDay(day){
   return new Date(day+"T12:00:00Z").getUTCDay();
 }
+const localStartTime = iso => new Intl.DateTimeFormat("en-GB",{timeZone:ZONE,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(iso));
 function allowedDailyStart(iso,weekday,duration){
-  const time=new Intl.DateTimeFormat("en-GB",{timeZone:ZONE,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(iso));
+  const time=localStartTime(iso);
   const [hour,minute]=time.split(":").map(Number);
   const end=hour*60+minute+duration;
   if(!BOOKING_START_TIMES[weekday]?.includes(time))return false;
@@ -96,13 +97,19 @@ async function dailyBookingCount(env,day,limit){
 async function availability(env,input){
   const range=dateRange(input.date),weekday=bookingDay(input.date);
   if(bookingDayClosed(input.date))return [];
-  const limit=BOOKING_START_TIMES[weekday]?.length||0;
+  const limit=weekday===6?1:3;
   const profile=(await square(env,"/bookings/business-booking-profile")).business_booking_profile;
   if(!profile?.booking_enabled||!profile?.support_seller_level_writes)throw new BookingError("Online booking is temporarily unavailable. Please contact us to schedule.",503,"API_ACCESS");
   const segments=await segmentsFor(env,input);
   if(await dailyBookingCount(env,input.date,limit)>=limit)return [];
   const r=await square(env,"/bookings/availability/search",{query:{filter:{location_id:LOCATION,start_at_range:range,segment_filters:segments.map(s=>({service_variation_id:s.id}))}}});
-  return (r.availabilities||[]).filter(a=>dayOf(a.start_at)===input.date&&Date.parse(a.start_at)>Date.now()&&allowedDailyStart(a.start_at,weekday,a.appointment_segments.reduce((total,segment)=>total+segment.duration_minutes,0)));
+  const slots=(r.availabilities||[]).filter(a=>dayOf(a.start_at)===input.date&&Date.parse(a.start_at)>Date.now()&&allowedDailyStart(a.start_at,weekday,a.appointment_segments.reduce((total,segment)=>total+segment.duration_minutes,0)));
+  if(weekday===6){
+    // Prefer 2 p.m.; show just one nearby opening if Square does not offer it.
+    const preferred=BOOKING_START_TIMES[6].find(time=>slots.some(a=>localStartTime(a.start_at)===time));
+    return slots.filter(a=>localStartTime(a.start_at)===preferred);
+  }
+  return slots;
 }
 function safeText(value,max){return typeof value==="string"?value.trim().slice(0,max):"";}
 async function sign(env,data){

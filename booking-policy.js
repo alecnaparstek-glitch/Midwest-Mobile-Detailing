@@ -2,7 +2,7 @@ export const WINTER_DISCOUNT = 20;
 
 export const BOOKING_START_TIMES = Object.freeze({
   0: Object.freeze(["08:00", "11:00", "14:00"]),
-  6: Object.freeze(["14:00"])
+  6: Object.freeze(["14:00", "13:30", "14:30"])
 });
 
 const weekday = date => new Date(date + 'T12:00:00Z').getUTCDay();
